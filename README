@@ -21,4 +21,40 @@ example:
 
 
 
+Implement the container epl::valarray. A valarray is essentially a vector that contains values , i.e., types that have the arithmetic operators defined. Your valarrays should have the following features:
+1. Arithmetic operations should be valid. That is, it is possible to add two valarrays, and the result should be another valarray.
+a. The statement: z = x op y should set z[k] = x[k] op y[k] for all k and for any
+binary operator op. A reasonable subset of the binary and unary
+operators must be supported.
+b. If the two operands are of differing length, the length of the result should
+be the minimun of the other two (ignore values past the end).
+c. If one of the operands is a scalar, you should add (or whatever operation
+is implied) that scalar value to each of the elements in the valarray. In other words, you should implicitly expand the scalar to be a valarray of the appropriate length. Please do not actually create this implied valarray.
+2. Lazy evaluation of expressions (using expression templates). You should optimize the execution of statements like z = ( x * y ) + w; Where x,y,z,w are valarrays, so that only one loop gets executed and no temporary arrays are allocated. To clarify, when the compiler makes the call to x.operator*(y), x and y should not immediately multiplied together. You should build up a representation of the expression, and only evaluate it when necessary (i.e., when the assignment operator, or the equivalent is called – watch out for that innocuous sounding “or equivalent” phrase, be sure you think through your use of expression templates). Expression templates must be transparent to the user – the semantics of your operator overloading should not reveal whether lazy evaluation or direct evaluation is being used.
+a. It is acceptable to assume that the valarray components of an expression will not change before the expression is actually evaluated. For example, the following screwball case does not need to work correctly:
+x = y + (z = z + 1);
+3. You must provide a result of the appropriate type using the facilities in
+promote.h. You must provide promotion so that scalars can be combined with valarrays in arithmetic expressions (scalars should be expanded to a valarray in which each element has the same value as the valarray). Thus, if x is a valarray, then the expression 2*x should multiply each element of x by two. Promotion should be to the strictest type acceptable for the operation to occur – e.g., if a valarray<int> is added to a complex<float> the result should be a valarray<complex<float> >. If a valarray<double> is added to a complex<float> then the result should be a valarray<complex<double> >.
+General notes about valarray:
+ You may make epl::vector<T> a base class for epl::valarray<T>, and you must provide constructors for void, std::initializer_list, and uint64_t. Note that
+if we can agree to grade the valarry project with GCC, then you can trivially meet this requirement by inheriting the constructors from epl::vector<T>. However, be mindful that Visual Studio 2013 does not support inherited constructors.
+ You may NOT use the valarray from the STL.
+ You must define the following operations:
+1. push_back
+2. pop_back
+3. operator[]
+4. appropriate iterator and const_iterator classes (and begin/end functions)
+5. the binary operators *,/,-,+
+6. a unary - (arithmetic negation)
+7. all necessary functions to convert from one valarray type to another
+8. a constructor that takes an initial size
+9. a sum() function that adds all elements in the valarray using standard
+addition
+10.an accumulate function that adds all elements in the valarray using the
+given function object
+11.an apply member function that takes a unary function argument and
+returns (conceptually) a new valarray where the function has been applied to each element in the valarray. Of course, this apply method must follow all the rules for lazy evaluation (i.e., it won’t return a real valarray, but rather some sort of expression template). HINT: function objects in the STL standard have nested types, including result_type which you might need to use.
+12.a sqrt member function that is implemented by passing a sqrt function object to the apply member function (just as I’m sure you implemented sum by passing plus to the accumulate method). The element type created from sqrt will either be double (for input valarrays that were int, float or double originally), or will be std::complex<double> for valarrays that were originally std::complex<float> or std::complex<double> originally.
+
+
       
