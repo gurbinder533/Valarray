@@ -1,0 +1,24 @@
+/**
+  Valarrays: Arrays to do mathematical calculations.
+  Author: Gurbinder Gill
+  email : gill@cs.utexas.edu
+  Language: C++11
+**/
+
+
+
+This is Valarray implemetation using concept of proxies and doing lazy evaluation to save space and increase efficiency.
+
+example: 
+	Valarray<int> a{1,2,3};
+	Valarray<int> b{3,4,5};
+
+
+	Valarray<int> result = a + b; // This computes results and allocte space for it.
+
+	cout << (a + b);   // Proxies are used that evaluates expression temporarily (lazy evaluation), without any allocation of unnecessary space.
+
+
+
+
+      
